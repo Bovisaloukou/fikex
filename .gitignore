@@ -39,3 +39,14 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# PWA service worker (generated at build)
+/public/sw.js
+/public/sw.js.map
+/public/swe-worker-*.js
+
+# database
+*.db
+*.db-shm
+*.db-wal
+/drizzle/
