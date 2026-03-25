@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { getDashboardStats } from "@/server/actions/dashboard";
+import { getDashboardStats, getCaisseDisponible } from "@/server/actions/dashboard";
 import { getRecentTransactions } from "@/server/actions/transactions";
 import { getBusiness } from "@/server/actions/businesses";
 import { formatShortAmount, formatRelativeTime } from "@/lib/format";
@@ -11,10 +11,11 @@ export const dynamic = "force-dynamic";
 
 export default async function DashboardPage() {
   const businessId = await getBusinessId();
-  const [stats, recentTxs, business] = await Promise.all([
+  const [stats, recentTxs, business, caisseDisponible] = await Promise.all([
     getDashboardStats(businessId),
     getRecentTransactions(businessId, 5),
     getBusiness(businessId),
+    getCaisseDisponible(businessId),
   ]);
 
   const soldeJournal = stats.totalSales - stats.totalExpenses;
@@ -27,9 +28,6 @@ export default async function DashboardPage() {
       todayNet += tx.type === "sale" ? tx.amount : -tx.amount;
     }
   }
-
-  // Simulated available cash (could come from a real source later)
-  const caisseDisponible = Math.max(0, Math.round(soldeJournal * 0.2));
 
   return (
     <div className="bg-white min-h-screen">

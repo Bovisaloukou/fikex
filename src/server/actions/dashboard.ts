@@ -46,6 +46,34 @@ export async function getDashboardStats(businessId: number) {
   };
 }
 
+export async function getCaisseDisponible(businessId: number) {
+  const rows = await db
+    .select({
+      type: transactions.type,
+      total: sql<number>`sum(${transactions.amount})`.as("total"),
+    })
+    .from(transactions)
+    .where(
+      and(
+        eq(transactions.businessId, businessId),
+        eq(transactions.source, "web")
+      )
+    )
+    .groupBy(transactions.type);
+
+  let sales = 0;
+  let expenses = 0;
+  for (const row of rows) {
+    if (row.type === "sale") {
+      sales = row.total;
+    } else {
+      expenses = row.total;
+    }
+  }
+
+  return Math.max(0, sales - expenses);
+}
+
 export async function getDailySummary(
   businessId: number,
   days: number = 30
