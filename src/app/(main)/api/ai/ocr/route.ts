@@ -1,5 +1,6 @@
 import { type NextRequest } from "next/server";
 import { ocrReceipt } from "@/lib/ai";
+import { aiRateLimit } from "@/lib/rate-limit";
 
 /**
  * POST /api/ai/ocr
@@ -9,6 +10,22 @@ import { ocrReceipt } from "@/lib/ai";
  * Returns: { transactions: Array<...> }
  */
 export async function POST(request: NextRequest) {
+  const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "anonymous";
+  const { success, remaining, resetAt } = aiRateLimit.check(ip);
+
+  if (!success) {
+    return Response.json(
+      { error: "Too many requests. Please try again later." },
+      {
+        status: 429,
+        headers: {
+          "X-RateLimit-Remaining": remaining.toString(),
+          "X-RateLimit-Reset": resetAt.toString(),
+        },
+      }
+    );
+  }
+
   try {
     const formData = await request.formData();
     const imageFile = formData.get("image") as File | null;

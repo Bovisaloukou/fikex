@@ -1,4 +1,5 @@
 import { type NextRequest } from "next/server";
+import { createHmac, timingSafeEqual } from "crypto";
 import { transcribeAudio, parseTransaction, ocrReceipt } from "@/lib/ai";
 import { getOrCreateBusiness } from "@/server/actions/businesses";
 import { createTransaction, createManyTransactions } from "@/server/actions/transactions";
@@ -83,8 +84,41 @@ export async function GET(request: NextRequest) {
 // ---------------------------------------------------------------------------
 
 export async function POST(request: NextRequest) {
+  // ---- Webhook signature validation ----
+  const appSecret = process.env.WHATSAPP_APP_SECRET;
+  const rawBody = await request.text();
+
+  if (appSecret) {
+    const signature = request.headers.get("x-hub-signature-256");
+    if (!signature) {
+      console.error("WhatsApp webhook: missing x-hub-signature-256 header");
+      return new Response("Unauthorized", { status: 401 });
+    }
+
+    const expectedHash = createHmac("sha256", appSecret)
+      .update(rawBody)
+      .digest("hex");
+    const expectedSignature = `sha256=${expectedHash}`;
+
+    const sigBuffer = Buffer.from(signature);
+    const expectedBuffer = Buffer.from(expectedSignature);
+
+    if (
+      sigBuffer.length !== expectedBuffer.length ||
+      !timingSafeEqual(sigBuffer, expectedBuffer)
+    ) {
+      console.error("WhatsApp webhook: invalid signature");
+      return new Response("Unauthorized", { status: 401 });
+    }
+  } else {
+    console.warn(
+      "WHATSAPP_APP_SECRET is not set — skipping webhook signature validation. " +
+        "Set it in production to secure your endpoint."
+    );
+  }
+
   try {
-    const body = await request.json();
+    const body = JSON.parse(rawBody);
 
     // WhatsApp sends various webhook events; we only care about messages
     const entry = body.entry?.[0];

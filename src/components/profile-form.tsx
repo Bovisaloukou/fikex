@@ -6,7 +6,7 @@ import { PageHeader } from "@/components/page-header";
 import { updateBusiness } from "@/server/actions/businesses";
 import { User, Camera, ChevronRight, Loader2, LogOut } from "lucide-react";
 import type { Business } from "@/server/db/schema";
-import { clearCookie } from "@/lib/client-auth";
+import { clearAuthCookie } from "@/server/actions/auth";
 
 interface ProfileFormProps {
   business: Business | null;
@@ -19,8 +19,8 @@ export function ProfileForm({ business }: ProfileFormProps) {
   const [city, setCity] = useState(business?.city ?? "");
   const [saving, setSaving] = useState(false);
 
-  function handleLogout() {
-    clearCookie("fikex_business_id");
+  async function handleLogout() {
+    await clearAuthCookie();
     router.push("/login");
   }
 

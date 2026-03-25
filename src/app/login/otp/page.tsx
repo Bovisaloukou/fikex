@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, ShieldCheck, Delete, Loader2, Phone } from "lucide-react";
 import { getBusinessByPhone } from "@/server/actions/businesses";
-import { setCookie } from "@/lib/client-auth";
+import { setAuthCookie } from "@/server/actions/auth";
 
 export default function OtpPage() {
   const router = useRouter();
@@ -39,7 +39,7 @@ export default function OtpPage() {
     try {
       const business = await getBusinessByPhone(phone.trim());
       if (business) {
-        setCookie("fikex_business_id", String(business.id));
+        await setAuthCookie(business.id);
         router.push("/dashboard");
       } else {
         setError("Aucun compte trouvé pour ce numéro. Créez un compte d'abord.");

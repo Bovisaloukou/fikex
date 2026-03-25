@@ -1,5 +1,6 @@
 import { type NextRequest } from "next/server";
 import { parseTransaction } from "@/lib/ai";
+import { aiRateLimit } from "@/lib/rate-limit";
 
 /**
  * POST /api/ai/parse-transaction
@@ -9,6 +10,22 @@ import { parseTransaction } from "@/lib/ai";
  * Returns: parsed transaction object or error
  */
 export async function POST(request: NextRequest) {
+  const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "anonymous";
+  const { success, remaining, resetAt } = aiRateLimit.check(ip);
+
+  if (!success) {
+    return Response.json(
+      { error: "Too many requests. Please try again later." },
+      {
+        status: 429,
+        headers: {
+          "X-RateLimit-Remaining": remaining.toString(),
+          "X-RateLimit-Reset": resetAt.toString(),
+        },
+      }
+    );
+  }
+
   try {
     const body = await request.json();
 
