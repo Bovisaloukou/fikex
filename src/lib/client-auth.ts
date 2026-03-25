@@ -7,3 +7,14 @@ export function getClientBusinessId(): number {
   const match = document.cookie.match(/fikex_business_id=(\d+)/);
   return match ? parseInt(match[1], 10) : 1;
 }
+
+/**
+ * Set a cookie (client-side). Extracted to avoid React Compiler immutability errors.
+ */
+export function setCookie(name: string, value: string, maxAge = 60 * 60 * 24 * 365): void {
+  document.cookie = `${name}=${value}; path=/; max-age=${maxAge}`;
+}
+
+export function clearCookie(name: string): void {
+  setCookie(name, "", 0);
+}

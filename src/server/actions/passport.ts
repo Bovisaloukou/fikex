@@ -2,7 +2,7 @@
 
 import { db } from "@/server/db";
 import { businesses, transactions } from "@/server/db/schema";
-import { eq, and, gte, sql, desc } from "drizzle-orm";
+import { eq, and, gte, sql } from "drizzle-orm";
 
 export async function generatePassportData(businessId: number) {
   // 1. Business info

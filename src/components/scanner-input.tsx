@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, useRef, useCallback, useEffect } from "react";
+import { useState, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { X, Camera, ImageIcon, Loader2, WifiOff } from "lucide-react";
 import { getClientBusinessId } from "@/lib/client-auth";
 import { createLocalTransaction } from "@/lib/create-local-transaction";
+import { useNetworkStatus } from "@/lib/use-network-status";
 
 type ScannerStatus = "idle" | "analyzing" | "confirm";
 
@@ -31,19 +32,9 @@ export function ScannerInput({
   const [transactions, setTransactions] = useState<ExtractedTransaction[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
-  const [isOnline, setIsOnline] = useState(
-    typeof navigator !== "undefined" ? navigator.onLine : true
-  );
+  const isOnline = useNetworkStatus();
   const cameraInputRef = useRef<HTMLInputElement | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-
-  useEffect(() => {
-    const on = () => setIsOnline(true);
-    const off = () => setIsOnline(false);
-    window.addEventListener("online", on);
-    window.addEventListener("offline", off);
-    return () => { window.removeEventListener("online", on); window.removeEventListener("offline", off); };
-  }, []);
 
   const reset = useCallback(() => {
     setStatus("idle");

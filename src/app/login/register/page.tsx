@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, ShieldCheck, Loader2 } from "lucide-react";
 import { getOrCreateBusiness } from "@/server/actions/businesses";
+import { setCookie } from "@/lib/client-auth";
 
 const activityTypes = [
   "Commerce",
@@ -45,7 +46,7 @@ export default function RegisterPage() {
       });
 
       if (business) {
-        document.cookie = `fikex_business_id=${business.id}; path=/; max-age=${60 * 60 * 24 * 365}`;
+        setCookie("fikex_business_id", String(business.id));
         router.push("/dashboard");
       }
     } catch (error) {

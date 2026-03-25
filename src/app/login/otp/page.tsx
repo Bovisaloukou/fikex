@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, ShieldCheck, Delete, Loader2, Phone } from "lucide-react";
 import { getBusinessByPhone } from "@/server/actions/businesses";
+import { setCookie } from "@/lib/client-auth";
 
 export default function OtpPage() {
   const router = useRouter();
@@ -38,7 +39,7 @@ export default function OtpPage() {
     try {
       const business = await getBusinessByPhone(phone.trim());
       if (business) {
-        document.cookie = `fikex_business_id=${business.id}; path=/; max-age=${60 * 60 * 24 * 365}`;
+        setCookie("fikex_business_id", String(business.id));
         router.push("/dashboard");
       } else {
         setError("Aucun compte trouvé pour ce numéro. Créez un compte d'abord.");
@@ -51,27 +52,23 @@ export default function OtpPage() {
     }
   }
 
-  const handleKeyPress = useCallback(
-    (digit: string) => {
-      const nextEmpty = code.findIndex((d) => d === "");
-      if (nextEmpty === -1) return;
+  function handleKeyPress(digit: string) {
+    const nextEmpty = code.findIndex((d) => d === "");
+    if (nextEmpty === -1) return;
 
-      const newCode = [...code];
-      newCode[nextEmpty] = digit;
-      setCode(newCode);
+    const newCode = [...code];
+    newCode[nextEmpty] = digit;
+    setCode(newCode);
 
-      // Auto-submit when all 4 digits are entered
-      if (nextEmpty === 3) {
-        // Small delay so user sees the last digit appear
-        setTimeout(() => loginWithPhone(), 300);
-      }
-    },
-    [code, phone]
-  );
+    // Auto-submit when all 4 digits are entered
+    if (nextEmpty === 3) {
+      setTimeout(() => loginWithPhone(), 300);
+    }
+  }
 
-  const handleBackspace = useCallback(() => {
+  function handleBackspace() {
     const lastFilled = code.reduce(
-      (acc, d, i) => (d !== "" ? i : acc),
+      (acc: number, d: string, i: number) => (d !== "" ? i : acc),
       -1
     );
     if (lastFilled === -1) return;
@@ -79,7 +76,7 @@ export default function OtpPage() {
     const newCode = [...code];
     newCode[lastFilled] = "";
     setCode(newCode);
-  }, [code]);
+  }
 
   function handleResend() {
     setCountdown(24);

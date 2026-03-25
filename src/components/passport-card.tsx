@@ -5,7 +5,6 @@ import { CreditScoreGauge } from "@/components/credit-score-gauge";
 import {
   BarChart3,
   TrendingUp,
-  TrendingDown,
   Minus,
   Building2,
   MapPin,

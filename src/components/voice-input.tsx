@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { X, Mic, Loader2, WifiOff } from "lucide-react";
 import { getClientBusinessId } from "@/lib/client-auth";
 import { createLocalTransaction } from "@/lib/create-local-transaction";
+import { useNetworkStatus } from "@/lib/use-network-status";
 
 type VoiceStatus = "idle" | "recording" | "transcribing" | "parsing" | "confirm";
 
@@ -31,18 +32,9 @@ export function VoiceInput({
   const [transaction, setTransaction] = useState<ParsedTransaction | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
-  const [isOnline, setIsOnline] = useState(
-    typeof navigator !== "undefined" ? navigator.onLine : true
-  );
+  const isOnline = useNetworkStatus();
   const languageRef = useRef(language);
   useEffect(() => { languageRef.current = language; }, [language]);
-  useEffect(() => {
-    const on = () => setIsOnline(true);
-    const off = () => setIsOnline(false);
-    window.addEventListener("online", on);
-    window.addEventListener("offline", off);
-    return () => { window.removeEventListener("online", on); window.removeEventListener("offline", off); };
-  }, []);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
 
