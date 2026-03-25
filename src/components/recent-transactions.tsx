@@ -1,6 +1,6 @@
 "use client";
 
-import { formatCFA } from "@/lib/format";
+import { formatCFA, getSourceLabel } from "@/lib/format";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -26,12 +26,12 @@ interface Transaction {
 
 const sourceConfig: Record<
   string,
-  { label: string; variant: BadgeVariant; icon: typeof MessageCircle }
+  { variant: BadgeVariant; icon: typeof MessageCircle }
 > = {
-  whatsapp: { label: "WhatsApp", variant: "whatsapp", icon: MessageCircle },
-  ussd: { label: "USSD", variant: "ussd", icon: Phone },
-  web: { label: "Web", variant: "web", icon: Globe },
-  ocr: { label: "OCR", variant: "ocr", icon: Camera },
+  whatsapp: { variant: "whatsapp", icon: MessageCircle },
+  ussd: { variant: "ussd", icon: Phone },
+  web: { variant: "web", icon: Globe },
+  ocr: { variant: "ocr", icon: Camera },
 };
 
 function formatShortDate(dateStr: string) {
@@ -58,6 +58,7 @@ export function RecentTransactions({ transactions }: { transactions: Transaction
         <div className="space-y-1">
           {transactions.map((tx) => {
             const source = sourceConfig[tx.source] ?? sourceConfig.web;
+            const sourceLabel = getSourceLabel(tx.source).label;
             const SourceIcon = source.icon;
             return (
               <div
@@ -94,7 +95,7 @@ export function RecentTransactions({ transactions }: { transactions: Transaction
 
                 <Badge variant={source.variant} className="hidden sm:inline-flex gap-1">
                   <SourceIcon className="h-3 w-3" />
-                  {source.label}
+                  {sourceLabel}
                 </Badge>
 
                 <p

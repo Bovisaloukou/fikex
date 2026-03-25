@@ -3,9 +3,9 @@ import { transcribeAudio, parseTransaction, ocrReceipt } from "@/lib/ai";
 import { getOrCreateBusiness } from "@/server/actions/businesses";
 import { createTransaction, createManyTransactions } from "@/server/actions/transactions";
 
-const WHATSAPP_TOKEN = process.env.WHATSAPP_TOKEN!;
+const WHATSAPP_TOKEN = process.env.WHATSAPP_ACCESS_TOKEN!;
 const WHATSAPP_VERIFY_TOKEN = process.env.WHATSAPP_VERIFY_TOKEN!;
-const WHATSAPP_PHONE_ID = process.env.WHATSAPP_PHONE_ID!;
+const WHATSAPP_PHONE_ID = process.env.WHATSAPP_PHONE_NUMBER_ID!;
 
 // ---------------------------------------------------------------------------
 // Helpers

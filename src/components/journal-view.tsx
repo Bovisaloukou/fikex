@@ -9,6 +9,11 @@ import {
   ChevronDown,
   Download,
 } from "lucide-react";
+import {
+  MONTH_NAMES,
+  getSourceLabel,
+  formatShortAmount,
+} from "@/lib/format";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -32,35 +37,11 @@ interface JournalViewProps {
 // Constants
 // ---------------------------------------------------------------------------
 
-const MONTH_NAMES = [
-  "Janvier",
-  "F\u00e9vrier",
-  "Mars",
-  "Avril",
-  "Mai",
-  "Juin",
-  "Juillet",
-  "Ao\u00fbt",
-  "Septembre",
-  "Octobre",
-  "Novembre",
-  "D\u00e9cembre",
-];
-
 const DAY_NAMES_SHORT = ["DIM", "LUN", "MAR", "MER", "JEU", "VEN", "SAM"];
 
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
-
-function formatAmountShort(amount: number): string {
-  return (
-    new Intl.NumberFormat("fr-FR", {
-      style: "decimal",
-      maximumFractionDigits: 0,
-    }).format(amount) + " F"
-  );
-}
 
 function formatTime(dateStr: string): string {
   const d = new Date(dateStr);
@@ -101,32 +82,6 @@ function formatGroupHeader(dateKey: string): string {
 
   const dayOfWeek = DAY_NAMES_SHORT[date.getDay()];
   return `${dayOfWeek}. ${dayNum} ${monthName.toUpperCase()}`;
-}
-
-function sourceLabel(source: string): { label: string; className: string } {
-  switch (source) {
-    case "whatsapp":
-      return {
-        label: "MOMO",
-        className: "bg-yellow-100 text-yellow-700",
-      };
-    case "ussd":
-      return {
-        label: "USSD",
-        className: "bg-blue-100 text-blue-700",
-      };
-    case "ocr":
-      return {
-        label: "OCR",
-        className: "bg-purple-100 text-purple-700",
-      };
-    case "web":
-    default:
-      return {
-        label: "CASH",
-        className: "bg-gray-100 text-gray-500",
-      };
-  }
 }
 
 // ---------------------------------------------------------------------------
@@ -350,7 +305,7 @@ export function JournalView({ transactions }: JournalViewProps) {
                 Entr\u00e9es
               </div>
               <p className="mt-1 lg:mt-0 text-lg font-semibold text-[#2D5A27]">
-                {formatAmountShort(totalIncome)}
+                {formatShortAmount(totalIncome)}
               </p>
             </div>
 
@@ -361,7 +316,7 @@ export function JournalView({ transactions }: JournalViewProps) {
                 Sorties
               </div>
               <p className="mt-1 lg:mt-0 text-lg font-semibold text-gray-900">
-                {formatAmountShort(totalExpense)}
+                {formatShortAmount(totalExpense)}
               </p>
             </div>
           </div>
@@ -401,7 +356,7 @@ export function JournalView({ transactions }: JournalViewProps) {
                     </tr>
                     {txs.map((tx) => {
                       const isIncome = tx.type === "sale";
-                      const src = sourceLabel(tx.source);
+                      const src = getSourceLabel(tx.source);
                       return (
                         <tr
                           key={tx.id}
@@ -441,7 +396,7 @@ export function JournalView({ transactions }: JournalViewProps) {
                             }`}
                           >
                             {isIncome ? "+ " : "- "}
-                            {formatAmountShort(tx.amount)}
+                            {formatShortAmount(tx.amount)}
                           </td>
                         </tr>
                       );
@@ -472,7 +427,7 @@ export function JournalView({ transactions }: JournalViewProps) {
               <div className="space-y-2">
                 {txs.map((tx) => {
                   const isIncome = tx.type === "sale";
-                  const src = sourceLabel(tx.source);
+                  const src = getSourceLabel(tx.source);
                   return (
                     <div
                       key={tx.id}
@@ -515,7 +470,7 @@ export function JournalView({ transactions }: JournalViewProps) {
                         }`}
                       >
                         {isIncome ? "+ " : "- "}
-                        {formatAmountShort(tx.amount)}
+                        {formatShortAmount(tx.amount)}
                       </p>
                     </div>
                   );

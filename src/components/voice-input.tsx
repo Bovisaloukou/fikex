@@ -93,8 +93,7 @@ export function VoiceInput({
             throw new Error("La transcription a echoue");
           }
 
-          const { text, engine } = await transcribeRes.json();
-          console.log(`[FiKex] Transcription (${engine}):`, text);
+          const { text } = await transcribeRes.json();
 
           // Step 2: Parse transaction
           setStatus("parsing");

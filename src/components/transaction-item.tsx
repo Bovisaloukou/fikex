@@ -1,5 +1,5 @@
 import { ArrowDownLeft, ArrowUpRight } from "lucide-react";
-import { formatShortAmount } from "@/lib/format";
+import { formatShortAmount, getSourceLabel } from "@/lib/format";
 
 interface TransactionItemProps {
   description: string;
@@ -9,25 +9,6 @@ interface TransactionItemProps {
   time: string;
 }
 
-const sourceLabels: Record<string, { label: string; className: string }> = {
-  whatsapp: {
-    label: "MOMO",
-    className: "bg-amber-100 text-amber-700",
-  },
-  web: {
-    label: "CASH",
-    className: "bg-gray-100 text-gray-600",
-  },
-  ussd: {
-    label: "USSD",
-    className: "bg-blue-100 text-blue-700",
-  },
-  ocr: {
-    label: "REÇU",
-    className: "bg-purple-100 text-purple-700",
-  },
-};
-
 export function TransactionItem({
   description,
   amount,
@@ -36,10 +17,7 @@ export function TransactionItem({
   time,
 }: TransactionItemProps) {
   const isSale = type === "sale";
-  const sourceInfo = sourceLabels[source] ?? {
-    label: source.toUpperCase(),
-    className: "bg-gray-100 text-gray-600",
-  };
+  const sourceInfo = getSourceLabel(source);
 
   return (
     <div className="flex items-center gap-3 py-3">

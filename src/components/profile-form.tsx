@@ -66,10 +66,11 @@ export function ProfileForm({ business }: ProfileFormProps) {
           </p>
           <div className="rounded-xl bg-white shadow-sm">
             <div className="px-4 py-3">
-              <label className="block text-xs text-gray-400">
+              <label htmlFor="business-name" className="block text-xs text-gray-400">
                 Nom de la boutique
               </label>
               <input
+                id="business-name"
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
@@ -79,10 +80,11 @@ export function ProfileForm({ business }: ProfileFormProps) {
             </div>
             <div className="mx-4 border-t border-gray-100" />
             <div className="px-4 py-3">
-              <label className="block text-xs text-gray-400">
+              <label htmlFor="sector" className="block text-xs text-gray-400">
                 Type d&apos;activit&eacute;
               </label>
               <input
+                id="sector"
                 type="text"
                 value={sector}
                 onChange={(e) => setSector(e.target.value)}
@@ -100,10 +102,11 @@ export function ProfileForm({ business }: ProfileFormProps) {
           </p>
           <div className="rounded-xl bg-white shadow-sm">
             <div className="px-4 py-3">
-              <label className="block text-xs text-gray-400">
+              <label htmlFor="city" className="block text-xs text-gray-400">
                 Adresse physique
               </label>
               <input
+                id="city"
                 type="text"
                 value={city}
                 onChange={(e) => setCity(e.target.value)}

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { formatCFA, formatDate } from "@/lib/format";
+import { formatCFA, formatDate, getSourceLabel } from "@/lib/format";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -29,11 +29,11 @@ interface Transaction {
   source: "whatsapp" | "ussd" | "web" | "ocr";
 }
 
-const sourceConfig: Record<string, { label: string; variant: BadgeVariant; icon: typeof MessageCircle }> = {
-  whatsapp: { label: "WhatsApp", variant: "whatsapp", icon: MessageCircle },
-  ussd: { label: "USSD", variant: "ussd", icon: Phone },
-  web: { label: "Web", variant: "web", icon: Globe },
-  ocr: { label: "OCR", variant: "ocr", icon: Camera },
+const sourceConfig: Record<string, { variant: BadgeVariant; icon: typeof MessageCircle }> = {
+  whatsapp: { variant: "whatsapp", icon: MessageCircle },
+  ussd: { variant: "ussd", icon: Phone },
+  web: { variant: "web", icon: Globe },
+  ocr: { variant: "ocr", icon: Camera },
 };
 
 type FilterTab = "all" | "vente" | "depense";
@@ -184,6 +184,7 @@ export function TransactionTable({ transactions }: { transactions: Transaction[]
         <div className="divide-y divide-border">
           {filtered.map((tx) => {
             const source = sourceConfig[tx.source] ?? sourceConfig.web;
+            const sourceLabel = getSourceLabel(tx.source).label;
             const SourceIcon = source.icon;
 
             return (
@@ -225,14 +226,14 @@ export function TransactionTable({ transactions }: { transactions: Transaction[]
                 <div className="hidden sm:block col-span-2">
                   <Badge variant={source.variant} className="gap-1">
                     <SourceIcon className="h-3 w-3" />
-                    {source.label}
+                    {sourceLabel}
                   </Badge>
                 </div>
 
                 <div className="col-span-3 sm:text-right flex sm:block items-center justify-between">
                   <Badge variant={source.variant} className="gap-1 sm:hidden">
                     <SourceIcon className="h-3 w-3" />
-                    {source.label}
+                    {sourceLabel}
                   </Badge>
                   <p
                     className={cn(

@@ -108,6 +108,7 @@ export function ManualInput({
           <button
             type="button"
             onClick={handleClose}
+            aria-label="Fermer"
             className="p-2 rounded-full hover:bg-surface transition-colors cursor-pointer"
           >
             <X className="h-5 w-5 text-muted" />
@@ -144,10 +145,11 @@ export function ManualInput({
 
           {/* Amount input */}
           <div>
-            <label className="block text-sm font-medium text-muted mb-2">
+            <label htmlFor="amount" className="block text-sm font-medium text-muted mb-2">
               Montant (FCFA)
             </label>
             <input
+              id="amount"
               type="number"
               inputMode="numeric"
               placeholder="0"
@@ -159,10 +161,11 @@ export function ManualInput({
 
           {/* Description input */}
           <div>
-            <label className="block text-sm font-medium text-muted mb-2">
+            <label htmlFor="description" className="block text-sm font-medium text-muted mb-2">
               Description
             </label>
             <input
+              id="description"
               type="text"
               placeholder="Ex: Vente de riz, Achat de ciment..."
               value={description}
@@ -173,11 +176,12 @@ export function ManualInput({
 
           {/* Category select */}
           <div>
-            <label className="block text-sm font-medium text-muted mb-2">
+            <label htmlFor="category" className="block text-sm font-medium text-muted mb-2">
               Categorie
             </label>
             <div className="relative">
               <select
+                id="category"
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
                 className="w-full py-3 px-4 pr-10 bg-surface rounded-xl border-0 outline-none focus:ring-2 focus:ring-primary/30 text-foreground appearance-none cursor-pointer"

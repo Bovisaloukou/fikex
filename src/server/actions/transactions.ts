@@ -61,7 +61,7 @@ export async function getMonthlyTotals(businessId: number) {
 
   const rows = await db
     .select({
-      month: sql<string>`strftime('%Y-%m', ${transactions.createdAt})`.as(
+      month: sql<string>`substring(${transactions.createdAt} from 1 for 7)`.as(
         "month"
       ),
       type: transactions.type,
@@ -74,8 +74,8 @@ export async function getMonthlyTotals(businessId: number) {
         gte(transactions.createdAt, cutoff)
       )
     )
-    .groupBy(sql`strftime('%Y-%m', ${transactions.createdAt})`, transactions.type)
-    .orderBy(sql`strftime('%Y-%m', ${transactions.createdAt})`);
+    .groupBy(sql`substring(${transactions.createdAt} from 1 for 7)`, transactions.type)
+    .orderBy(sql`substring(${transactions.createdAt} from 1 for 7)`);
 
   // Pivot into { month, sales, expenses } format
   const monthMap = new Map<

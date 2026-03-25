@@ -24,7 +24,7 @@ export async function generatePassportData(businessId: number) {
   // Monthly totals by type
   const monthlyRows = await db
     .select({
-      month: sql<string>`strftime('%Y-%m', ${transactions.createdAt})`.as(
+      month: sql<string>`substring(${transactions.createdAt} from 1 for 7)`.as(
         "month"
       ),
       type: transactions.type,
@@ -39,10 +39,10 @@ export async function generatePassportData(businessId: number) {
       )
     )
     .groupBy(
-      sql`strftime('%Y-%m', ${transactions.createdAt})`,
+      sql`substring(${transactions.createdAt} from 1 for 7)`,
       transactions.type
     )
-    .orderBy(sql`strftime('%Y-%m', ${transactions.createdAt})`);
+    .orderBy(sql`substring(${transactions.createdAt} from 1 for 7)`);
 
   // 3. Top categories
   const topCategories = await db
